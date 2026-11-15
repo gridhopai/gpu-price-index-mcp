@@ -56,7 +56,7 @@ claude mcp add --transport http gridhop https://gridhop.dev/v1/mcp
 | `tier` | `datacenter` drops independent marketplace hosts. |
 | `max_price_hr` | Ceiling in USD per hour for the whole machine. |
 | `providers` | Any of `vastai`, `runpod`, `aws_spot`, `gcp_spot`. |
-| `include_interruptible` | Omit for on-demand prices plus AWS and Google Cloud spot. `true` adds marketplace minimum bids. `false` drops all spot. |
+| `include_interruptible` | Omit for on-demand prices plus AWS and Google Cloud spot. `true` adds marketplace minimum bids. `false` drops all spot, which removes AWS and Google Cloud entirely. |
 | `min_reliability` | Drop hosts below this provider reliability score. Default 0.9. |
 | `max_carbon_g_kwh` | Only hosts on a grid at or below this carbon intensity. |
 | `sort_by` | `price` (default) or `carbon`. |
@@ -138,6 +138,7 @@ Refreshed every hour. Every result carries `observed_at`, the time of the snapsh
 ## What to keep in mind
 
 - **Prices are list prices at snapshot time**, before any fee, and they move. A marketplace machine can be rented by someone else a minute later.
+- **AWS and Google Cloud are covered by spot prices only.** Their on-demand prices are not in the index, so every AWS and Google Cloud row is interruptible, and `include_interruptible: false` returns none of them.
 - **Google Cloud rows are what a machine would cost, not proof it is available.** Spot GPU capacity is often unavailable; the tool says so when it shows those rows.
 - **Marketplace bid prices are minimum bids**, a floor rather than the price of keeping the machine, so they are left out unless you ask for them.
 - **Carbon values cover about half of the offers**: Europe, Great Britain and most US states. Elsewhere the field is empty rather than guessed.
