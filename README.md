@@ -56,8 +56,8 @@ claude mcp add --transport http gridhop https://gridhop.dev/v1/mcp
 | `region_filter` | Two-letter country codes, e.g. `["US", "DE"]`. |
 | `tier` | `datacenter` drops independent marketplace hosts. |
 | `max_price_hr` | Ceiling in USD per hour for the whole machine. |
-| `providers` | Any of `vastai`, `runpod`, `aws`, `aws_spot`, `azure`, `azure_spot`, `gcp_spot`. `aws` and `azure` are on-demand prices; the `_spot` ones are spot prices. |
-| `include_interruptible` | Omit for on-demand prices plus AWS, Azure and Google Cloud spot. `true` adds marketplace minimum bids. `false` drops all spot, which removes Google Cloud entirely. |
+| `providers` | Any of `vastai`, `runpod`, `nebius`, `nebius_spot`, `aws`, `aws_spot`, `azure`, `azure_spot`, `gcp_spot`. `aws`, `azure` and `nebius` are on-demand prices; the `_spot` ones are spot prices. |
+| `include_interruptible` | Omit for on-demand prices plus AWS, Azure, Google Cloud and Nebius spot. `true` adds marketplace minimum bids. `false` drops all spot, which removes Google Cloud entirely. |
 | `min_reliability` | Drop hosts below this provider reliability score. Default 0.9. |
 | `max_carbon_g_kwh` | Only hosts on a grid at or below this carbon intensity. |
 | `sort_by` | `price` (default) or `carbon`. |
@@ -116,7 +116,7 @@ One optional argument, `vram_min` (GB). Returns one row per GPU class, cheapest 
 | `granularity` | `daily` (default) or `hourly` (last 72 hours). |
 | `days` | How far back, 1 to 90. Default 14. |
 
-Each point has the cheapest on-demand price seen, the typical one (median of that day's hourly lows), the cheapest AWS, Azure or Google Cloud spot price, all per GPU, and how many hourly snapshots the day has. A summary gives the low, the high and the change over the period. Prices follow `find_offers`' defaults: no marketplace minimum bids, no hosts under 0.9 reliability. History starts 1 November 2026 and is hourly from 10 November.
+Each point has the cheapest on-demand price seen, the typical one (median of that day's hourly lows), the cheapest AWS, Azure, Google Cloud or Nebius spot price, all per GPU, and how many hourly snapshots the day has. A summary gives the low, the high and the change over the period. Prices follow `find_offers`' defaults: no marketplace minimum bids, no hosts under 0.9 reliability. History starts 1 November 2026 and is hourly from 10 November.
 
 ### `grid_carbon`
 
@@ -133,13 +133,14 @@ Per grid: carbon intensity now and how old the reading is, the low and high of t
 
 Refreshed every hour. Every result carries `observed_at`, the time of the snapshot.
 
-- **Prices**: Vast.ai and RunPod public listings, the AWS EC2 on-demand and spot price feeds, the Azure Retail Prices API (pay-as-you-go and Spot), and Google Cloud's Billing Catalog (Spot; vCPU + memory + GPU, added up per machine type).
+- **Prices**: Vast.ai and RunPod public listings, Nebius spot prices from Nebius's public spot-price API and its on-demand list prices via the [SkyPilot catalog](https://github.com/skypilot-org/skypilot-catalog) (checked against Nebius's pricing page), the AWS EC2 on-demand and spot price feeds, the Azure Retail Prices API (pay-as-you-go and Spot), and Google Cloud's Billing Catalog (Spot; vCPU + memory + GPU, added up per machine type).
 - **Carbon intensity**: computed from each grid's generation mix with IPCC lifecycle emission factors. Generation data: ENTSO-E Transparency Platform (Europe), NESO Carbon Intensity API (Great Britain, CC BY 4.0), US Energy Information Administration (US).
 
 ## What to keep in mind
 
 - **Prices are list prices at snapshot time**, before any fee, and they move. A marketplace machine can be rented by someone else a minute later.
-- **AWS and Azure have both on-demand and spot prices; Google Cloud has spot only.** Its on-demand prices are not in the index yet, so every Google Cloud row is interruptible and `include_interruptible: false` returns none of them.
+- **AWS, Azure and Nebius have both on-demand and spot prices; Google Cloud has spot only.** Its on-demand prices are not in the index yet, so every Google Cloud row is interruptible and `include_interruptible: false` returns none of them.
+- **Nebius spot prices move fast**: with demand, as often as every 15 minutes, several-fold within a day, and they can exceed the on-demand price. The index reads them once an hour.
 - **Cloud rows are list prices, not machines confirmed free.** On AWS and Azure the large GPU types usually need a quota increase first, and Azure Spot capacity can be unavailable. Some Azure sizes are left out until their GPU count is confirmed (NCads A10 v4, RTX PRO 6000, GB200), as are sizes with a fraction of a GPU.
 - **Google Cloud rows are what a machine would cost, not proof it is available.** Spot GPU capacity is often unavailable; the tool says so when it shows those rows.
 - **Marketplace bid prices are minimum bids**, a floor rather than the price of keeping the machine, so they are left out unless you ask for them.
