@@ -4,6 +4,8 @@ A free, read-only [MCP](https://modelcontextprotocol.io) server that tells an AI
 
 No account, no API key, nothing to install. It cannot rent anything; it only answers questions.
 
+Want your agent to actually run the job, not just price it? That is [GridHop](https://gridhop.dev/waitlist?src=github), coming next. [Join the waitlist](https://gridhop.dev/waitlist?src=github).
+
 ```
 https://gridhop.dev/v1/mcp
 ```
@@ -78,6 +80,12 @@ To see whether the server works and what people look for, each request is logged
 
 ## Status
 
-Early and free. It is the first public piece of GridHop, a broker that will let an agent run a GPU job where and when compute is cheapest and cleanest. The server may change; breaking changes will get a new path (`/v2/mcp`).
+Early and free. The server may change; breaking changes will get a new path (`/v2/mcp`).
+
+## What comes next: GridHop
+
+This index is the first public piece of GridHop, a broker for AI agents. Your agent hands over a GPU job with a budget and a deadline; GridHop picks the machine and the hour across marketplaces, runs it, and returns the results. One prepaid balance, spend caps enforced on our side, scheduling by price and by grid carbon.
+
+It is not open yet. **[Join the waitlist](https://gridhop.dev/waitlist?src=github)** to hear when it is, and to tell us what you would run.
 
 Questions, wrong prices, a GPU class you could not find: please [open an issue](https://github.com/gridhopai/gpu-price-index-mcp/issues).
