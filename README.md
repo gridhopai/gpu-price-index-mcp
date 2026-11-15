@@ -96,7 +96,7 @@ One offer from a real answer to "cheapest RTX 4090 in the US" (15 November 2026)
 | `interruptible` | `true` for spot and bid prices: the machine can be taken back. |
 | `carbon_g_kwh` | Grid carbon intensity, g CO₂eq per kWh. Empty where no open data covers the grid. |
 | `carbon_source` | `entsoe_gen` (Europe), `neso` (Great Britain) or `eia` (US). |
-| `carbon_lag_h` | Age of the carbon reading in hours. 0 is live; US readings are 24 or 48. |
+| `carbon_lag_h` | Age of the carbon reading in hours. 0 to 3 is live; US readings are 24 or 48 (same hour of day, one or two days earlier). |
 | `est_gco2_per_hr` | Rough grams of CO₂ per hour: carbon intensity × nameplate GPU power × GPU count. |
 | `grid_zone` | The power grid the reading refers to. Pass it to `grid_carbon` for more. |
 | `carbon_uncertain` | `true` when part of that grid's generation has no fuel type and the mix is partly assumed. |
