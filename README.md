@@ -31,7 +31,8 @@ claude mcp add --transport http gridhop https://gridhop.dev/v1/mcp
 - "What's the cheapest RTX 4090 I can rent right now?"
 - "Find an 8×H100 machine in a datacenter, under $25 an hour."
 - "Which A100 offer runs on the cleanest grid?"
-- "Compare L4 prices on AWS and Google Cloud in Europe."
+- "Compare T4 prices on AWS, Azure and Google Cloud in Europe."
+- "What does an 8×H100 machine cost on demand on AWS and on Azure, and how much cheaper is spot?"
 - "Which GPUs with at least 48 GB can I rent, and what do they cost?"
 - "Has the H100 price gone up or down this week?"
 - "Which European grid is cleanest right now, and when is power cheapest in Texas?"
@@ -55,8 +56,8 @@ claude mcp add --transport http gridhop https://gridhop.dev/v1/mcp
 | `region_filter` | Two-letter country codes, e.g. `["US", "DE"]`. |
 | `tier` | `datacenter` drops independent marketplace hosts. |
 | `max_price_hr` | Ceiling in USD per hour for the whole machine. |
-| `providers` | Any of `vastai`, `runpod`, `aws_spot`, `gcp_spot`. |
-| `include_interruptible` | Omit for on-demand prices plus AWS and Google Cloud spot. `true` adds marketplace minimum bids. `false` drops all spot, which removes AWS and Google Cloud entirely. |
+| `providers` | Any of `vastai`, `runpod`, `aws`, `aws_spot`, `azure`, `azure_spot`, `gcp_spot`. `aws` and `azure` are on-demand prices; the `_spot` ones are spot prices. |
+| `include_interruptible` | Omit for on-demand prices plus AWS, Azure and Google Cloud spot. `true` adds marketplace minimum bids. `false` drops all spot, which removes Google Cloud entirely. |
 | `min_reliability` | Drop hosts below this provider reliability score. Default 0.9. |
 | `max_carbon_g_kwh` | Only hosts on a grid at or below this carbon intensity. |
 | `sort_by` | `price` (default) or `carbon`. |
@@ -115,7 +116,7 @@ One optional argument, `vram_min` (GB). Returns one row per GPU class, cheapest 
 | `granularity` | `daily` (default) or `hourly` (last 72 hours). |
 | `days` | How far back, 1 to 90. Default 14. |
 
-Each point has the cheapest on-demand price seen, the typical one (median of that day's hourly lows), the cheapest AWS or Google Cloud spot price, all per GPU, and how many hourly snapshots the day has. A summary gives the low, the high and the change over the period. Prices follow `find_offers`' defaults: no marketplace minimum bids, no hosts under 0.9 reliability. History starts 1 November 2026 and is hourly from 10 November.
+Each point has the cheapest on-demand price seen, the typical one (median of that day's hourly lows), the cheapest AWS, Azure or Google Cloud spot price, all per GPU, and how many hourly snapshots the day has. A summary gives the low, the high and the change over the period. Prices follow `find_offers`' defaults: no marketplace minimum bids, no hosts under 0.9 reliability. History starts 1 November 2026 and is hourly from 10 November.
 
 ### `grid_carbon`
 
@@ -132,13 +133,14 @@ Per grid: carbon intensity now and how old the reading is, the low and high of t
 
 Refreshed every hour. Every result carries `observed_at`, the time of the snapshot.
 
-- **Prices**: Vast.ai and RunPod public listings, the AWS EC2 spot price feed, and Google Cloud's Billing Catalog (vCPU + memory + GPU, added up per machine type).
+- **Prices**: Vast.ai and RunPod public listings, the AWS EC2 on-demand and spot price feeds, the Azure Retail Prices API (pay-as-you-go and Spot), and Google Cloud's Billing Catalog (Spot; vCPU + memory + GPU, added up per machine type).
 - **Carbon intensity**: computed from each grid's generation mix with IPCC lifecycle emission factors. Generation data: ENTSO-E Transparency Platform (Europe), NESO Carbon Intensity API (Great Britain, CC BY 4.0), US Energy Information Administration (US).
 
 ## What to keep in mind
 
 - **Prices are list prices at snapshot time**, before any fee, and they move. A marketplace machine can be rented by someone else a minute later.
-- **AWS and Google Cloud are covered by spot prices only.** Their on-demand prices are not in the index, so every AWS and Google Cloud row is interruptible, and `include_interruptible: false` returns none of them.
+- **AWS and Azure have both on-demand and spot prices; Google Cloud has spot only.** Its on-demand prices are not in the index yet, so every Google Cloud row is interruptible and `include_interruptible: false` returns none of them.
+- **Cloud rows are list prices, not machines confirmed free.** On AWS and Azure the large GPU types usually need a quota increase first, and Azure Spot capacity can be unavailable. Some Azure sizes are left out until their GPU count is confirmed (NCads A10 v4, RTX PRO 6000, GB200), as are sizes with a fraction of a GPU.
 - **Google Cloud rows are what a machine would cost, not proof it is available.** Spot GPU capacity is often unavailable; the tool says so when it shows those rows.
 - **Marketplace bid prices are minimum bids**, a floor rather than the price of keeping the machine, so they are left out unless you ask for them.
 - **Carbon values cover about half of the offers**: Europe, Great Britain and most US states. Elsewhere the field is empty rather than guessed.
