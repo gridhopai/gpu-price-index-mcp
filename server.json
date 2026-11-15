@@ -2,8 +2,8 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.gridhopai/gpu-price-index",
   "title": "GridHop GPU Price & Carbon Index",
-  "description": "Live GPU rental prices on Vast.ai, RunPod, AWS and Google Cloud, price history and grid carbon.",
-  "version": "0.4.0",
+  "description": "Live GPU rental prices on Vast.ai, RunPod, AWS, Azure and Google Cloud, with grid carbon data.",
+  "version": "0.5.0",
   "websiteUrl": "https://github.com/gridhopai/gpu-price-index-mcp",
   "repository": {
     "url": "https://github.com/gridhopai/gpu-price-index-mcp",
