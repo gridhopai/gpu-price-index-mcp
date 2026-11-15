@@ -88,4 +88,4 @@ This index is the first public piece of GridHop, a broker for AI agents. Your ag
 
 It is not open yet. **[Join the waitlist](https://gridhop.dev/waitlist?src=github)** to hear when it is, and to tell us what you would run.
 
-Questions, wrong prices, a GPU class you could not find: please [open an issue](https://github.com/gridhopai/gpu-price-index-mcp/issues).
+Questions, wrong prices, a GPU class you could not find: write to [support@gridhop.dev](mailto:support@gridhop.dev) or [open an issue](https://github.com/gridhopai/gpu-price-index-mcp/issues).
