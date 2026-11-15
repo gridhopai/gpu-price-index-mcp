@@ -1,0 +1,32 @@
+# Publishes server.json to the official MCP Registry.
+#
+# Runs only when started by hand. Authentication is GitHub's OIDC token for this
+# repository: the registry accepts it for names under io.github.gridhopai/*, so no
+# secret or key is stored anywhere. A published version cannot be edited afterwards;
+# to change anything, raise "version" in server.json and run this again.
+name: publish-to-mcp-registry
+on:
+  workflow_dispatch:
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install mcp-publisher
+        run: |
+          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
+          ./mcp-publisher --version || true
+      - name: Check the endpoint answers before listing it
+        run: |
+          url=$(python3 -c "import json; print(json.load(open('server.json'))['remotes'][0]['url'])")
+          curl -fsS -m 30 -X POST -H 'Content-Type: application/json' \
+            -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' "$url" | python3 -c "import json,sys; t=json.load(sys.stdin)['result']['tools']; assert t and t[0]['name']=='find_offers', t; print('tools:', [x['name'] for x in t])"
+      - name: Validate server.json
+        run: ./mcp-publisher validate server.json
+      - name: Log in with this repository's OIDC token
+        run: ./mcp-publisher login github-oidc
+      - name: Publish
+        run: ./mcp-publisher publish server.json
