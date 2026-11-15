@@ -64,6 +64,45 @@ claude mcp add --transport http gridhop https://gridhop.dev/v1/mcp
 
 Each offer comes back with provider, GPU class and count, price per hour, country and region, host tier, reliability score, whether it can be interrupted, and where known: grid carbon intensity (g CO₂/kWh), how old that reading is, the grid zone it refers to, and a rough estimate of grams of CO₂ per hour for the GPUs at full load.
 
+One offer from a real answer to "cheapest RTX 4090 in the US" (15 November 2026):
+
+```json
+{
+  "provider": "vastai",
+  "gpu_class": "RTX4090",
+  "gpu_count": 1,
+  "vram_gb": 24,
+  "price_usd_hr": 0.575,
+  "price_per_gpu_hr": 0.575,
+  "region": "Texas",
+  "country": "US",
+  "tier": "community",
+  "reliability": 0.995,
+  "interruptible": false,
+  "carbon_g_kwh": 410,
+  "carbon_source": "eia",
+  "carbon_lag_h": 48,
+  "est_gco2_per_hr": 184,
+  "grid_zone": "US-TEX-ERCO",
+  "carbon_uncertain": false
+}
+```
+
+| Field | Meaning |
+| --- | --- |
+| `price_usd_hr`, `price_per_gpu_hr` | List price for the whole machine, and per GPU. |
+| `tier` | `datacenter`, or `community` for an independent host on a marketplace. |
+| `reliability` | The provider's own score, 0 to 1. Empty where the provider publishes none. |
+| `interruptible` | `true` for spot and bid prices: the machine can be taken back. |
+| `carbon_g_kwh` | Grid carbon intensity, g CO₂eq per kWh. Empty where no open data covers the grid. |
+| `carbon_source` | `entsoe_gen` (Europe), `neso` (Great Britain) or `eia` (US). |
+| `carbon_lag_h` | Age of the carbon reading in hours. 0 is live; US readings are 24 or 48. |
+| `est_gco2_per_hr` | Rough grams of CO₂ per hour: carbon intensity × nameplate GPU power × GPU count. |
+| `grid_zone` | The power grid the reading refers to. Pass it to `grid_carbon` for more. |
+| `carbon_uncertain` | `true` when part of that grid's generation has no fuel type and the mix is partly assumed. |
+
+The answer wraps the offers with `observed_at` (snapshot time), `total_matching`, `warnings` (things the agent should tell you, such as stale carbon readings), and `sources`.
+
 ### `list_gpus`
 
 One optional argument, `vram_min` (GB). Returns one row per GPU class, cheapest first.
