@@ -32,8 +32,20 @@ claude mcp add --transport http gridhop https://gridhop.dev/v1/mcp
 - "Find an 8×H100 machine in a datacenter, under $25 an hour."
 - "Which A100 offer runs on the cleanest grid?"
 - "Compare L4 prices on AWS and Google Cloud in Europe."
+- "Which GPUs with at least 48 GB can I rent, and what do they cost?"
+- "Has the H100 price gone up or down this week?"
+- "Which European grid is cleanest right now, and when is power cheapest in Texas?"
 
-## The tool: `find_offers`
+## The tools
+
+| Tool | What it answers |
+| --- | --- |
+| `find_offers` | The cheapest or cleanest offers for a GPU class right now. |
+| `list_gpus` | Which GPU classes are on offer: VRAM, providers, machine sizes, cheapest on-demand and spot price. |
+| `price_history` | How the cheapest price of a class has moved, per day or per hour. |
+| `grid_carbon` | How clean and how expensive the electricity is on each power grid, now and at its best hour. |
+
+### `find_offers`
 
 | Argument | Meaning |
 | --- | --- |
@@ -51,6 +63,31 @@ claude mcp add --transport http gridhop https://gridhop.dev/v1/mcp
 | `limit` | Up to 50 offers. Default 10. |
 
 Each offer comes back with provider, GPU class and count, price per hour, country and region, host tier, reliability score, whether it can be interrupted, and where known: grid carbon intensity (g CO₂/kWh), how old that reading is, the grid zone it refers to, and a rough estimate of grams of CO₂ per hour for the GPUs at full load.
+
+### `list_gpus`
+
+One optional argument, `vram_min` (GB). Returns one row per GPU class, cheapest first.
+
+### `price_history`
+
+| Argument | Meaning |
+| --- | --- |
+| `gpu_class` (required) | As for `find_offers`. `H100` returns one series per variant. |
+| `granularity` | `daily` (default) or `hourly` (last 72 hours). |
+| `days` | How far back, 1 to 90. Default 14. |
+
+Each point has the cheapest on-demand price seen, the typical one (median of that day's hourly lows), the cheapest AWS or Google Cloud spot price, all per GPU, and how many hourly snapshots the day has. A summary gives the low, the high and the change over the period. Prices follow `find_offers`' defaults: no marketplace minimum bids, no hosts under 0.9 reliability. History starts 1 November 2026 and is hourly from 10 November.
+
+### `grid_carbon`
+
+| Argument | Meaning |
+| --- | --- |
+| `region_filter` | Two-letter country codes. |
+| `grid_zone` | One grid by id, e.g. `SE-SE3`, `US-TEX-ERCO`. The ids match `grid_zone` on offers. |
+| `sort_by` | `carbon` (default, cleanest first) or `power_price`. |
+| `limit` | Up to 60 grids. Default 20. |
+
+Per grid: carbon intensity now and how old the reading is, the low and high of the last 24 hours and when, the hour of day that is usually cleanest, the day-ahead wholesale power price now and the cheapest hour in the next 24. Wholesale prices cover Europe (ENTSO-E), Texas (ERCOT) and California (CAISO); a GPU host may pay a fixed tariff, so a cheap hour on the grid does not by itself make a GPU cheaper.
 
 ## Where the data comes from
 
@@ -72,7 +109,7 @@ Refreshed every hour. Every result carries `observed_at`, the time of the snapsh
 
 ## What is logged
 
-To see whether the server works and what people look for, each request is logged with: the name and version your agent reports for itself, the country Cloudflare saw the request come from, the search arguments, and the outcome. **No IP address, account, or anything else that identifies a person is stored.**
+To see whether the server works and what people look for, each request is logged with: the name and version your agent reports for itself, the country Cloudflare saw the request come from, the tool called, its arguments, and the outcome. **No IP address, account, or anything else that identifies a person is stored.**
 
 ## Limits
 
