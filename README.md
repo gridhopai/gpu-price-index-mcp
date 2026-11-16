@@ -1,5 +1,7 @@
 # GridHop GPU Price & Carbon Index
 
+[![mcptry](https://mcptry.com/badge/io.github.gridhopai/gpu-price-index)](https://mcptry.com/servers/io.github.gridhopai/gpu-price-index)
+
 A free, read-only [MCP](https://modelcontextprotocol.io) server that tells an AI agent what a GPU costs to rent right now, across several clouds and marketplaces, and how clean the electricity is where that GPU sits.
 
 No account, no API key, nothing to install. It cannot rent anything; it only answers questions.
