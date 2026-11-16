@@ -172,4 +172,8 @@ This index is the first public piece of GridHop, a broker for AI agents. Your ag
 
 It is not open yet. **[Join the waitlist](https://gridhop.dev/waitlist?src=github)** to hear when it is, and to tell us what you would run.
 
+## Licence
+
+The files in this repository are under the [MIT licence](LICENSE). The hosted server and its data are a separate thing: free to use, provided as is, with the data sources credited above.
+
 Questions, wrong prices, a GPU class you could not find: write to [support@gridhop.dev](mailto:support@gridhop.dev) or [open an issue](https://github.com/gridhopai/gpu-price-index-mcp/issues).
