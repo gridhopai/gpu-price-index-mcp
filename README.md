@@ -58,7 +58,7 @@ claude mcp add --transport http gridhop https://gridhop.dev/v1/mcp
 | `region_filter` | Two-letter country codes, e.g. `["US", "DE"]`. |
 | `tier` | `datacenter` drops independent marketplace hosts. |
 | `max_price_hr` | Ceiling in USD per hour for the whole machine. |
-| `providers` | Any of `vastai`, `runpod`, `nebius`, `nebius_spot`, `coreweave`, `aws`, `aws_spot`, `azure`, `azure_spot`, `gcp_spot`. `aws`, `azure`, `nebius` and `coreweave` are on-demand prices; the `_spot` ones are spot prices. |
+| `providers` | Any of `vastai`, `runpod`, `nebius`, `nebius_spot`, `coreweave`, `lambda`, `aws`, `aws_spot`, `azure`, `azure_spot`, `gcp_spot`. `aws`, `azure`, `nebius`, `coreweave` and `lambda` are on-demand prices; the `_spot` ones are spot prices. |
 | `include_interruptible` | Omit for on-demand prices plus AWS, Azure, Google Cloud and Nebius spot. `true` adds marketplace minimum bids. `false` drops all spot, which removes Google Cloud entirely. |
 | `min_reliability` | Drop hosts below this provider reliability score. Default 0.9. |
 | `max_carbon_g_kwh` | Only hosts on a grid at or below this carbon intensity. |
@@ -135,7 +135,7 @@ Per grid: carbon intensity now and how old the reading is, the low and high of t
 
 Refreshed every hour. Every result carries `observed_at`, the time of the snapshot.
 
-- **Prices**: Vast.ai and RunPod public listings, Nebius spot prices from Nebius's public spot-price API and its on-demand list prices via the [SkyPilot catalog](https://github.com/skypilot-org/skypilot-catalog) (checked against Nebius's pricing page), CoreWeave on-demand list prices from its public pricing page, AWS EC2 on-demand price files and AWS spot prices via the SkyPilot catalog, the Azure Retail Prices API (pay-as-you-go and Spot), and Google Cloud's Billing Catalog (Spot; vCPU + memory + GPU, added up per machine type).
+- **Prices**: Vast.ai and RunPod public listings, Nebius spot prices from Nebius's public spot-price API and its on-demand list prices via the [SkyPilot catalog](https://github.com/skypilot-org/skypilot-catalog) (checked against Nebius's pricing page), CoreWeave on-demand list prices from its public pricing page, Lambda on-demand list prices via the SkyPilot catalog (checked daily against Lambda's pricing page), AWS EC2 on-demand price files and AWS spot prices via the SkyPilot catalog, the Azure Retail Prices API (pay-as-you-go and Spot), and Google Cloud's Billing Catalog (Spot; vCPU + memory + GPU, added up per machine type).
 - **Carbon intensity**: computed from each grid's generation mix with IPCC lifecycle emission factors. Generation data: ENTSO-E Transparency Platform (Europe), NESO Carbon Intensity API (Great Britain, CC BY 4.0), US Energy Information Administration (US).
 
 ## What to keep in mind
@@ -145,6 +145,7 @@ Refreshed every hour. Every result carries `observed_at`, the time of the snapsh
 - **Nebius spot prices move fast**: with demand, as often as every 15 minutes, several-fold within a day, and they can exceed the on-demand price. The index reads them once an hour.
 - **AWS spot prices are not live.** AWS has no key-less feed of current spot prices, so they come from the SkyPilot catalog, refreshed a few times a day: the cheapest availability zone of each region, up to about half a day old. (Until 16 November 2026 this index read an AWS feed that turned out to be frozen since 2024; those prices were wrong and have been removed from the history.)
 - **CoreWeave is on-demand only, whole 8-GPU nodes, with no region.** Its pricing page gives one price for all regions, so those rows have no country and no carbon value, and `region_filter` leaves them out. The spot prices on that page are updated by hand every few days, not a live market, so they are not in the index. A CoreWeave account is opened through its sales team.
+- **Lambda is on-demand list prices with no region.** Lambda charges the same in every region, and its instances are first come, first served and often sold out, so those rows say what a machine costs, not where one is free. They have no country and no carbon value, and `region_filter` leaves them out.
 - **Cloud rows are list prices, not machines confirmed free.** On AWS and Azure the large GPU types usually need a quota increase first, and Azure Spot capacity can be unavailable. Some Azure sizes are left out until their GPU count is confirmed (NCads A10 v4, RTX PRO 6000, GB200), as are sizes with a fraction of a GPU.
 - **Google Cloud rows are what a machine would cost, not proof it is available.** Spot GPU capacity is often unavailable; the tool says so when it shows those rows.
 - **Marketplace bid prices are minimum bids**, a floor rather than the price of keeping the machine, so they are left out unless you ask for them.
