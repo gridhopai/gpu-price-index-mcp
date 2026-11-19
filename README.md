@@ -106,6 +106,8 @@ One offer from a real answer to "cheapest RTX 4090 in the US" (15 November 2026)
 
 The answer wraps the offers with `observed_at` (snapshot time), `total_matching`, `warnings` (things the agent should tell you, such as stale carbon readings), and `sources`.
 
+RTX 4090, 5090 and 3090 are consumer cards: only the marketplaces (Vast.ai, RunPod) rent them out, no cloud does. If you ask a cloud provider for one, or ask for a datacenter and none has it, the answer says so and adds `alternatives`: datacenter cards with at least as much memory (L4, A10, A6000, L40S and the like), cheapest first.
+
 ### `list_gpus`
 
 One optional argument, `vram_min` (GB). Returns one row per GPU class, cheapest first.
