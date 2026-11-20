@@ -3,8 +3,8 @@
   "name": "io.github.gridhopai/gpu-price-index",
   "title": "GridHop GPU Price & Carbon Index",
   "description": "Live GPU rental prices on AWS, Azure, Google Cloud, Vast.ai, RunPod, Lambda and more, with carbon.",
-  "version": "0.11.0",
-  "websiteUrl": "https://github.com/gridhopai/gpu-price-index-mcp",
+  "version": "0.11.1",
+  "websiteUrl": "https://gridhop.dev",
   "icons": [
     { "src": "https://gridhop.dev/icon.png", "mimeType": "image/png", "sizes": ["512x512"] },
     { "src": "https://gridhop.dev/icon.svg", "mimeType": "image/svg+xml", "sizes": ["any"] }
