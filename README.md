@@ -56,6 +56,8 @@ claude mcp add --transport http gridhop https://gridhop.dev/v1/mcp
 | `count` | GPUs on one machine. Default 1. |
 | `vram_min` | Minimum VRAM per GPU, GB. |
 | `region_filter` | Two-letter country codes, e.g. `["US", "DE"]`. |
+| `continents` | Any of `africa`, `asia`, `europe`, `north_america`, `oceania`, `south_america`. |
+| `us_states` | Two-letter US state codes, e.g. `["TX", "CA"]`. Cloud regions count as the state the provider documents (AWS `us-east-1` is `VA`). |
 | `tier` | `datacenter` drops independent marketplace hosts. |
 | `max_price_hr` | Ceiling in USD per hour for the whole machine. |
 | `providers` | Any of `vastai`, `runpod`, `nebius`, `nebius_spot`, `coreweave`, `lambda`, `aws`, `aws_spot`, `azure`, `azure_spot`, `gcp_spot`. `aws`, `azure`, `nebius`, `coreweave` and `lambda` are on-demand prices; the `_spot` ones are spot prices. |
@@ -94,6 +96,7 @@ One offer from a real answer to "cheapest RTX 4090 in the US" (15 November 2026)
 | Field | Meaning |
 | --- | --- |
 | `price_usd_hr`, `price_per_gpu_hr` | List price for the whole machine, and per GPU. |
+| `state` | US state of the host, two-letter code, where known. |
 | `tier` | `datacenter`, or `community` for an independent host on a marketplace. |
 | `reliability` | The provider's own score, 0 to 1. Empty where the provider publishes none. |
 | `interruptible` | `true` for spot and bid prices: the machine can be taken back. |
@@ -155,6 +158,7 @@ Refreshed every hour. Every result carries `observed_at`, the time of the snapsh
 - **US carbon readings are one or two days old** (same hour of day), because the source publishes late. `carbon_lag_h` says how old each reading is.
 - **Some readings are estimates.** Where a grid operator reports part of its generation without a fuel type, the offer is marked `carbon_uncertain`.
 - Carbon intensity counts what is generated in a grid zone, not imports. The CO₂-per-hour figure uses nameplate GPU power only; it is an estimate, not a measurement.
+- **Location filters add up**: a host matches if it is in any country, continent or US state you list (`US` plus `us_states` means only those states). Offers with no published location (Lambda, CoreWeave, RunPod) match none of them.
 - Outside the US, Vast.ai gives only a host's country, so countries with several grid zones use one default zone. `grid_zone` shows which.
 
 ## What is logged
