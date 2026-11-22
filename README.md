@@ -20,6 +20,14 @@ https://gridhop.dev/v1/mcp
 claude mcp add --transport http gridhop https://gridhop.dev/v1/mcp
 ```
 
+Or as a plugin, which keeps itself up to date:
+
+```
+/plugin install gridhop --marketplace gridhopai/gpu-price-index-mcp
+```
+
+On Claude Code older than 2.1.275: `/plugin marketplace add gridhopai/gpu-price-index-mcp`, then `/plugin install gridhop@gridhop`.
+
 **Cursor** (`~/.cursor/mcp.json`)
 
 ```json
