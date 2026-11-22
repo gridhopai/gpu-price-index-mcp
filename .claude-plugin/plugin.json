@@ -1,0 +1,23 @@
+{
+  "name": "gridhop",
+  "displayName": "GridHop GPU Price & Carbon Index",
+  "version": "0.1.0",
+  "description": "Live GPU rental prices across Vast.ai, RunPod, Lambda, Nebius, CoreWeave, OVHcloud, AWS, Azure and Google Cloud, with the carbon intensity of each machine's power grid. Free, read-only MCP server: no account, no API key.",
+  "author": {
+    "name": "GridHop",
+    "url": "https://gridhop.dev"
+  },
+  "homepage": "https://gridhop.dev",
+  "repository": "https://github.com/gridhopai/gpu-price-index-mcp",
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "gpu",
+    "gpu-pricing",
+    "cloud-cost",
+    "carbon",
+    "h100",
+    "rtx-4090"
+  ],
+  "privacyPolicyUrl": "https://github.com/gridhopai/gpu-price-index-mcp#what-is-logged"
+}
