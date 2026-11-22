@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "gridhop": {
+      "type": "http",
+      "url": "https://gridhop.dev/v1/mcp?src=claude-plugin"
+    }
+  }
+}
