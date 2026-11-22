@@ -1,0 +1,12 @@
+{
+  "name": "gridhop",
+  "owner": { "name": "GridHop", "url": "https://gridhop.dev" },
+  "description": "GridHop: GPU rental prices and grid carbon for AI agents.",
+  "plugins": [
+    {
+      "name": "gridhop",
+      "source": "./",
+      "description": "Ask what a GPU costs to rent right now across nine clouds and marketplaces, how its price has moved, and how clean the power is where it runs. Free, read-only MCP server."
+    }
+  ]
+}
