@@ -107,6 +107,7 @@ One offer from a real answer to "cheapest RTX 4090 in the US" (15 November 2026)
 | `state` | US state of the host, two-letter code, where known. |
 | `tier` | `datacenter`, or `community` for an independent host on a marketplace. |
 | `reliability` | The provider's own score, 0 to 1. Empty where the provider publishes none. |
+| `stock` | RunPod only: its own stock level for that GPU and tier, `high`, `medium` or `low`. |
 | `interruptible` | `true` for spot and bid prices: the machine can be taken back. |
 | `carbon_g_kwh` | Grid carbon intensity, g CO₂eq per kWh. Empty where no open data covers the grid. |
 | `carbon_source` | `entsoe_gen` (Europe), `neso` (Great Britain) or `eia` (US). |
@@ -121,7 +122,7 @@ RTX 4090, 5090 and 3090 are consumer cards: only the marketplaces (Vast.ai, RunP
 
 ### `list_gpus`
 
-One optional argument, `vram_min` (GB). Returns one row per GPU class, cheapest first.
+One optional argument, `vram_min` (GB). Returns one row per GPU class, cheapest first, with `vastai_machines_listed` (machines of that class free to rent on Vast.ai now) and `runpod_stock` where those providers list it.
 
 ### `price_history`
 
@@ -160,6 +161,7 @@ Refreshed every hour. Every result carries `observed_at`, the time of the snapsh
 - **CoreWeave is on-demand only, whole 8-GPU nodes, with no region.** Its pricing page gives one price for all regions, so those rows have no country and no carbon value, and `region_filter` leaves them out. The spot prices on that page are updated by hand every few days, not a live market, so they are not in the index. A CoreWeave account is opened through its sales team.
 - **Lambda is on-demand list prices with no region.** Lambda charges the same in every region, and its instances are first come, first served and often sold out, so those rows say what a machine costs, not where one is free. They have no country and no carbon value, and `region_filter` leaves them out.
 - **OVHcloud's European prices have no country.** Its catalog gives one euro price for datacenters in several countries and does not say which datacenter sells which machine, so those rows have no country or carbon value and location filters leave them out. Rows from its US catalog are in the US. The dollar price of a European row moves a little from day to day with the exchange rate.
+- **Availability is known for two providers only.** Every Vast.ai row is a machine that can be rented now, and RunPod publishes a stock level (`stock`). AWS, Azure, Google Cloud, CoreWeave, Lambda, Nebius and OVHcloud publish prices without saying whether a machine is free.
 - **Cloud rows are list prices, not machines confirmed free.** On AWS and Azure the large GPU types usually need a quota increase first, and Azure Spot capacity can be unavailable. Some Azure sizes are left out until their GPU count is confirmed (NCads A10 v4, RTX PRO 6000, GB200), as are sizes with a fraction of a GPU.
 - **Google Cloud rows are what a machine would cost, not proof it is available.** Spot GPU capacity is often unavailable; the tool says so when it shows those rows.
 - **Marketplace bid prices are minimum bids**, a floor rather than the price of keeping the machine, so they are left out unless you ask for them.
